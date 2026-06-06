@@ -281,3 +281,85 @@ const TRIP = {
     { title: "Car kit", note: "UK sticker and headlamp beam converters for driving on the right." }
   ]
 };
+
+
+/* ------------------------------------------------------------------
+   Stop photos (lead images from Wikipedia / Wikimedia Commons,
+   freely licensed). Attached to each stop on load. To swap a photo,
+   replace its url below.
+------------------------------------------------------------------ */
+const TRIP_IMAGES = {
+  "folkestone": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Folkestone_Harbour_with_Viaduct_and_Swing_Bridge.png/1280px-Folkestone_Harbour_with_Viaduct_and_Swing_Bridge.png", alt: "Folkestone" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Chargement_voiture_Eurotunnel.jpg/1280px-Chargement_voiture_Eurotunnel.jpg", alt: "Eurotunnel Le Shuttle" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Leas_Lift_%282%29.JPG/1280px-Leas_Lift_%282%29.JPG", alt: "Leas Lift" }
+  ],
+  "calais": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Jielbeaumadier_Calais_2008_35.jpeg/1280px-Jielbeaumadier_Calais_2008_35.jpeg", alt: "Calais" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Calais_Nord_phare.JPG/1280px-Calais_Nord_phare.JPG", alt: "Calais Lighthouse" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Calais_hotel_de_ville_face.jpg/1280px-Calais_hotel_de_ville_face.jpg", alt: "Hôtel de Ville" }
+  ],
+  "reims": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Exterior_view_of_the_west_facade_of_Notre-Dame_Cathedral_in_Reims.jpg/1280px-Exterior_view_of_the_west_facade_of_Notre-Dame_Cathedral_in_Reims.jpg", alt: "Reims Cathedral" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Palais_du_Tau_et_cath%C3%A9drale.jpg/1280px-Palais_du_Tau_et_cath%C3%A9drale.jpg", alt: "Palace of Tau" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Sub%C3%A9_Fountain%2C_Reims%2C_France.jpg/1280px-Sub%C3%A9_Fountain%2C_Reims%2C_France.jpg", alt: "Reims" }
+  ],
+  "hautvillers": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Town_Hall_Hautvillers.jpg/1280px-Town_Hall_Hautvillers.jpg", alt: "Hautvillers" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Glass_of_champagne.jpg/1280px-Glass_of_champagne.jpg", alt: "Champagne" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/La_Marne_a_Dormans_DSC_0117.JPG/1280px-La_Marne_a_Dormans_DSC_0117.JPG", alt: "Marne" }
+  ],
+  "troyes": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Troyes_centre_ville1.JPG/1280px-Troyes_centre_ville1.JPG", alt: "Troyes" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Cath%C3%A9drale_Saint-Pierre-et-Saint-Paul%2C_Troyes%2C_West_view_20140509_1.jpg/1280px-Cath%C3%A9drale_Saint-Pierre-et-Saint-Paul%2C_Troyes%2C_West_view_20140509_1.jpg", alt: "Troyes Cathedral" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Glass_of_champagne.jpg/1280px-Glass_of_champagne.jpg", alt: "Champagne" }
+  ],
+  "beaune": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Beaune_-_H%C3%B4tel-Dieu_-_Cour_-_05.jpg/1280px-Beaune_-_H%C3%B4tel-Dieu_-_Cour_-_05.jpg", alt: "Hôtel-Dieu de Beaune" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Beaune_-_H%C3%B4tel-Dieu_-_Cour_-_02.jpg/1280px-Beaune_-_H%C3%B4tel-Dieu_-_Cour_-_02.jpg", alt: "Beaune" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Vignobles_cotes_de_beaune-fr.svg/1280px-Vignobles_cotes_de_beaune-fr.svg.png", alt: "Côte de Beaune" }
+  ],
+  "basel": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Basler_-_Basler_M%C3%BCnster_Westfassade.jpg/1280px-Basler_-_Basler_M%C3%BCnster_Westfassade.jpg", alt: "Basel Minster" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Basel_-_M%C3%BCnsterpfalz1.jpg/1280px-Basel_-_M%C3%BCnsterpfalz1.jpg", alt: "Basel" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Zolli-logo.JPG/1280px-Zolli-logo.JPG", alt: "Basel Zoo" }
+  ],
+  "titisee": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Titisee-blick_von_hochfirst.jpg", alt: "Titisee" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Blick_vom_Hohfelsen.jpg/1280px-Blick_vom_Hohfelsen.jpg", alt: "Black Forest" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Triberg_waterfall.jpg/1280px-Triberg_waterfall.jpg", alt: "Triberg Waterfalls" }
+  ],
+  "riquewihr": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/0_Riquewihr_%281%29.jpg/1280px-0_Riquewihr_%281%29.jpg", alt: "Riquewihr" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Colmar_%2832350846618%29.jpg/1280px-Colmar_%2832350846618%29.jpg", alt: "Alsace" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Kaysersberg.jpg/1280px-Kaysersberg.jpg", alt: "Kaysersberg" }
+  ],
+  "strasbourg": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Strasbourg_Cathedral_Exterior_-_Diliff.jpg/1280px-Strasbourg_Cathedral_Exterior_-_Diliff.jpg", alt: "Strasbourg Cathedral" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Strasbourg_Petite-France_place_Benjamin-Zix_septembre_2015.jpg/1280px-Strasbourg_Petite-France_place_Benjamin-Zix_septembre_2015.jpg", alt: "Petite France" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Strasbourg_Cathedral.jpg/1280px-Strasbourg_Cathedral.jpg", alt: "Strasbourg" }
+  ],
+  "heidelberg": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Heidelberg-2726936.jpg/1280px-Heidelberg-2726936.jpg", alt: "Heidelberg Castle" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Alte_Br%C3%BCcke_Heidelberg.JPG/1280px-Alte_Br%C3%BCcke_Heidelberg.JPG", alt: "Old Bridge" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/K%C3%B6nigstuhl%2C_Heidelberg%2C_U-17.jpg/1280px-K%C3%B6nigstuhl%2C_Heidelberg%2C_U-17.jpg", alt: "Heidelberg" }
+  ],
+  "luxembourg": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Luxembourg_Grand_Ducal_Palace_01.jpg/1280px-Luxembourg_Grand_Ducal_Palace_01.jpg", alt: "Luxembourg City" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/5/57/Selig_Luxembourg_from_Paffendall.jpg", alt: "Bock" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/%C3%89glise_Saint-Jean_%28Neum%C3%BCnster%29_20180627.jpg/1280px-%C3%89glise_Saint-Jean_%28Neum%C3%BCnster%29_20180627.jpg", alt: "Grund" }
+  ],
+  "maastricht": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Maastricht_sunset.jpg/1280px-Maastricht_sunset.jpg", alt: "Maastricht" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Vrijthof_-_Maastricht%2C_Holland_-_panoramio.jpg/1280px-Vrijthof_-_Maastricht%2C_Holland_-_panoramio.jpg", alt: "Vrijthof" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Maastricht%2C_de_Sint_Servaasbasiliek_op_het_Vrijhof_foto8_2011-01-30_13.01.JPG/1280px-Maastricht%2C_de_Sint_Servaasbasiliek_op_het_Vrijhof_foto8_2011-01-30_13.01.JPG", alt: "Basilica of Saint Servatius" }
+  ],
+  "ghent-bruges": [
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Br%C3%BCgge_Blick_vom_Belfried_4.jpg/1280px-Br%C3%BCgge_Blick_vom_Belfried_4.jpg", alt: "Bruges" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Gent%2C_de_Graslei_vanaf_de_Korenlei_met_oeg24758tm61%2B25159_IMG_0447_2021-08-13_18.37.jpg/1280px-Gent%2C_de_Graslei_vanaf_de_Korenlei_met_oeg24758tm61%2B25159_IMG_0447_2021-08-13_18.37.jpg", alt: "Ghent" },
+    { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Brugge_Belfort_HDR.jpg/1280px-Brugge_Belfort_HDR.jpg", alt: "Belfry of Bruges" }
+  ]
+};
+
+// Attach photos to their stops.
+TRIP.stops.forEach(function (s) { s.images = TRIP_IMAGES[s.id] || []; });

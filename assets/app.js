@@ -202,6 +202,7 @@
           <div class="ctry">${esc(stop.country)}</div>
         </div>
       </div>
+      ${galleryHtml(stop)}
       <div class="detail-tags">${tags.join("")}</div>
       <p class="summary">${esc(stop.summary)}</p>
       <div class="section-title">✨ Things to do</div>
@@ -210,11 +211,71 @@
       <div id="hotel-mount"></div>
     `;
     $("#back-btn").addEventListener("click", showList);
+    v.querySelectorAll(".g-img").forEach((btn) =>
+      btn.addEventListener("click", () => openLightbox(stop.images, +btn.dataset.idx)));
     renderHotel(stop);
 
     $("#list-view").hidden = true;
     v.hidden = false;
     $("#detail-pane").scrollTop = 0;
+  }
+
+  function galleryHtml(stop) {
+    const imgs = stop.images || [];
+    if (!imgs.length) return "";
+    const cls = imgs.length === 1 ? "one" : imgs.length === 2 ? "two" : "three";
+    const cells = imgs.map((im, i) =>
+      `<button class="g-img" data-idx="${i}" type="button" aria-label="View larger: ${esc(im.alt)}">
+         <img src="${esc(im.url)}" alt="${esc(im.alt)}" loading="lazy" />
+       </button>`).join("");
+    return `<div class="gallery ${cls}">${cells}</div>`;
+  }
+
+  /* ---------------- Lightbox ---------------- */
+  let lbImages = [], lbIndex = 0, lbEl = null;
+
+  function openLightbox(images, index) {
+    lbImages = images || []; lbIndex = index || 0;
+    if (!lbEl) {
+      lbEl = document.createElement("div");
+      lbEl.className = "lightbox";
+      lbEl.innerHTML = `
+        <button class="lb-close" aria-label="Close">✕</button>
+        <button class="lb-nav lb-prev" aria-label="Previous">‹</button>
+        <figure class="lb-figure"><img alt="" /><figcaption></figcaption></figure>
+        <button class="lb-nav lb-next" aria-label="Next">›</button>`;
+      document.body.appendChild(lbEl);
+      lbEl.addEventListener("click", (e) => { if (e.target === lbEl) closeLightbox(); });
+      lbEl.querySelector(".lb-close").addEventListener("click", closeLightbox);
+      lbEl.querySelector(".lb-prev").addEventListener("click", (e) => { e.stopPropagation(); stepLightbox(-1); });
+      lbEl.querySelector(".lb-next").addEventListener("click", (e) => { e.stopPropagation(); stepLightbox(1); });
+      document.addEventListener("keydown", (e) => {
+        if (!lbEl.classList.contains("open")) return;
+        if (e.key === "Escape") closeLightbox();
+        if (e.key === "ArrowLeft") stepLightbox(-1);
+        if (e.key === "ArrowRight") stepLightbox(1);
+      });
+    }
+    renderLightbox();
+    lbEl.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+  function renderLightbox() {
+    const im = lbImages[lbIndex];
+    lbEl.querySelector("img").src = im.url;
+    lbEl.querySelector("img").alt = im.alt;
+    lbEl.querySelector("figcaption").textContent = im.alt;
+    const multi = lbImages.length > 1;
+    lbEl.querySelector(".lb-prev").style.display = multi ? "" : "none";
+    lbEl.querySelector(".lb-next").style.display = multi ? "" : "none";
+  }
+  function stepLightbox(d) {
+    lbIndex = (lbIndex + d + lbImages.length) % lbImages.length;
+    renderLightbox();
+  }
+  function closeLightbox() {
+    if (lbEl) lbEl.classList.remove("open");
+    document.body.style.overflow = "";
   }
 
   function showList() {
