@@ -1,0 +1,88 @@
+<svg viewBox="0 0 780 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d" style="font-family:-apple-system,'Segoe UI',sans-serif">
+  <title id="t">12-day Europe road trip route map</title>
+  <desc id="d">Loop from Folkestone via Calais through Reims, Hautvillers, Troyes, Beaune to Basel, then Titisee, Riquewihr, Strasbourg, Heidelberg, Luxembourg, Maastricht, Ghent and back to Calais, with drive times per leg.</desc>
+  <style>
+    .city { font-size:13px; font-weight:600; fill:#2C2C2A; paint-order:stroke; stroke:#FFFFFF; stroke-width:3px; }
+    .sub { font-size:10.5px; font-weight:400; fill:#5F5E5A; paint-order:stroke; stroke:#FFFFFF; stroke-width:3px; }
+    .drive { font-size:11px; fill:#5F5E5A; paint-order:stroke; stroke:#FFFFFF; stroke-width:3px; }
+    .country { font-size:11px; letter-spacing:2.5px; fill:#5F5E5A; opacity:0.5; }
+    .leg { stroke:#378ADD; stroke-width:2.5; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+    .shuttle { stroke:#378ADD; stroke-width:2; fill:none; stroke-dasharray:4 5; stroke-linecap:round; }
+    .arrow { fill:#378ADD; }
+    .night { fill:#378ADD; }
+    .nightnum { font-size:9px; font-weight:700; fill:#FFFFFF; text-anchor:middle; }
+    .way { fill:#FFFFFF; stroke:#378ADD; stroke-width:2; }
+  </style>
+  <rect width="780" height="640" fill="#FFFFFF"/>
+  <text class="country" x="42" y="40">ENGLAND</text>
+  <text class="country" x="318" y="152" text-anchor="middle">BELGIUM</text>
+  <text class="country" x="520" y="58" text-anchor="middle">NETHERLANDS</text>
+  <text class="country" x="200" y="352">FRANCE</text>
+  <text class="country" x="688" y="206" text-anchor="middle">GERMANY</text>
+  <text class="country" x="652" y="578" text-anchor="middle">SWITZERLAND</text>
+  <path class="shuttle" d="M79,74 L135,89"/>
+  <path class="leg" d="M135,89 L307,294 L301,316 L310,410 L372,565 L593,500 L636,458 L569,426 L605,376 L679,277 L475,252 L441,102 L283,77 L135,89"/>
+  <path class="arrow" d="M0,-4 L9,0 L0,4 Z" transform="translate(221,191) rotate(50)"/>
+  <path class="arrow" d="M0,-4 L9,0 L0,4 Z" transform="translate(341,487) rotate(68)"/>
+  <path class="arrow" d="M0,-4 L9,0 L0,4 Z" transform="translate(482,532) rotate(-16)"/>
+  <path class="arrow" d="M0,-4 L9,0 L0,4 Z" transform="translate(642,326) rotate(-53)"/>
+  <path class="arrow" d="M0,-4 L9,0 L0,4 Z" transform="translate(577,264) rotate(-173)"/>
+  <path class="arrow" d="M0,-4 L9,0 L0,4 Z" transform="translate(458,177) rotate(-103)"/>
+  <path class="arrow" d="M0,-4 L9,0 L0,4 Z" transform="translate(362,89) rotate(-171)"/>
+  <path class="arrow" d="M0,-4 L9,0 L0,4 Z" transform="translate(209,83) rotate(-175)"/>
+  <text class="drive" x="110" y="62" text-anchor="middle">Le Shuttle · 35 m</text>
+  <text class="drive" x="234" y="186">2 h 40</text>
+  <text class="drive" x="318" y="310">35 m</text>
+  <text class="drive" x="316" y="368">1 h 10</text>
+  <text class="drive" x="330" y="490" text-anchor="end">2 h 00</text>
+  <text class="drive" x="482" y="551" text-anchor="middle">2 h 40</text>
+  <text class="drive" x="630" y="487">1 h 10</text>
+  <text class="drive" x="601" y="455" text-anchor="middle">1 h 40</text>
+  <text class="drive" x="574" y="398" text-anchor="end">1 h 00</text>
+  <text class="drive" x="654" y="332">1 h 45</text>
+  <text class="drive" x="577" y="248" text-anchor="middle">2 h 45</text>
+  <text class="drive" x="470" y="182">2 h 30</text>
+  <text class="drive" x="362" y="107" text-anchor="middle">2 h 00</text>
+  <text class="drive" x="209" y="66" text-anchor="middle">1 h 20</text>
+  <circle class="way" cx="135" cy="89" r="4.5"/>
+  <circle class="way" cx="301" cy="316" r="4.5"/>
+  <circle class="way" cx="569" cy="426" r="4.5"/>
+  <circle class="way" cx="283" cy="77" r="4.5"/>
+  <circle class="way" cx="79" cy="74" r="4.5"/>
+  <text class="city" x="72" y="68" text-anchor="end">Folkestone</text>
+  <text class="sub" x="72" y="81" text-anchor="end">start / finish</text>
+  <text class="city" x="128" y="108" text-anchor="end">Calais</text>
+  <circle class="night" cx="307" cy="294" r="8"/><text class="nightnum" x="307" y="297.5">1</text>
+  <text class="city" x="321" y="291">Reims</text>
+  <text class="sub" x="288" y="320" text-anchor="end">Hautvillers</text>
+  <text class="sub" x="288" y="332" text-anchor="end">champagne stop</text>
+  <circle class="night" cx="310" cy="410" r="8"/><text class="nightnum" x="310" y="413.5">1</text>
+  <text class="city" x="296" y="414" text-anchor="end">Troyes</text>
+  <circle class="night" cx="372" cy="565" r="8"/><text class="nightnum" x="372" y="568.5">1</text>
+  <text class="city" x="372" y="590" text-anchor="middle">Beaune</text>
+  <circle class="night" cx="593" cy="500" r="8"/><text class="nightnum" x="593" y="503.5">3</text>
+  <text class="city" x="593" y="524" text-anchor="middle">Basel</text>
+  <circle class="night" cx="636" cy="458" r="8"/><text class="nightnum" x="636" y="461.5">1</text>
+  <text class="city" x="650" y="462">Titisee</text>
+  <text class="sub" x="556" y="424" text-anchor="end">Riquewihr</text>
+  <text class="sub" x="556" y="436" text-anchor="end">lunch stop</text>
+  <circle class="night" cx="605" cy="376" r="8"/><text class="nightnum" x="605" y="379.5">1</text>
+  <text class="city" x="591" y="380" text-anchor="end">Strasbourg</text>
+  <circle class="night" cx="679" cy="277" r="8"/><text class="nightnum" x="679" y="280.5">1</text>
+  <text class="city" x="693" y="281">Heidelberg</text>
+  <circle class="night" cx="475" cy="252" r="8"/><text class="nightnum" x="475" y="255.5">1</text>
+  <text class="city" x="475" y="276" text-anchor="middle">Luxembourg</text>
+  <circle class="night" cx="441" cy="102" r="8"/><text class="nightnum" x="441" y="105.5">1</text>
+  <text class="city" x="455" y="99">Maastricht</text>
+  <text class="sub" x="455" y="112">relatives</text>
+  <text class="sub" x="283" y="56" text-anchor="middle">Ghent / Bruges · lunch</text>
+  <g transform="translate(42,600)">
+    <circle class="night" cx="6" cy="-4" r="8"/><text class="nightnum" x="6" y="-0.5">n</text>
+    <text class="drive" x="20" y="0">overnight (n nights)</text>
+    <circle class="way" cx="150" cy="-4" r="4.5"/>
+    <text class="drive" x="162" y="0">stop en route</text>
+    <line class="shuttle" x1="255" y1="-4" x2="285" y2="-4"/>
+    <text class="drive" x="292" y="0">Channel Tunnel</text>
+    <text class="drive" x="400" y="0">total driving ≈ 21–22 h over 12 days</text>
+  </g>
+</svg>
