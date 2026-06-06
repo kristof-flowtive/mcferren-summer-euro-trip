@@ -4,6 +4,8 @@ A clean, warm family website for our 12-day European road trip — an interactiv
 map of the whole route, things to do at every stop, and a place to keep hotel
 bookings once we make them.
 
+### 👉 Live site: https://kristof-flowtive.github.io/mcferren-summer-euro-trip/
+
 **Route:** Kent → Calais → Reims → Troyes → Beaune → **Basel (3 nights)** →
 Black Forest → Strasbourg → Heidelberg → Luxembourg → Maastricht → Ghent/Bruges → home.
 
