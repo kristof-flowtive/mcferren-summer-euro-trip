@@ -308,6 +308,7 @@ h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; margin: 
 }
 .tag.drive { color: var(--terracotta-d); }
 .tag.night { background: #f6e3d8; color: var(--terracotta-d); border-color: #ecc9b6; }
+.tag.date { background: var(--sage-d); color: #fff; border-color: var(--sage-d); font-weight: 800; }
 
 .summary { font-size: 15px; line-height: 1.55; color: var(--ink); margin: 14px 0 6px; }
 

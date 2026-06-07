@@ -137,8 +137,9 @@
   function popupHtml(stop) {
     const sub = stop.type === "overnight" ? stop.overnight
       : stop.type === "waypoint" ? "Stop en route" : "Start / finish";
+    const dateLine = stop.date ? `🗓 ${esc(stop.date)} · ` : "";
     return `<div class="popup-name">${esc(stop.name)}</div>
-            <div class="popup-sub">${esc(sub)}</div>
+            <div class="popup-sub">${dateLine}${esc(sub)}</div>
             <div class="popup-link" onclick="window.__openStop('${stop.id}')">See things to do →</div>`;
   }
 
@@ -155,9 +156,10 @@
     TRIP.stops.forEach((stop) => {
       const booked = Store.get(stop.id);
       const li = document.createElement("li");
-      const sub = stop.type === "overnight" ? stop.overnight
-        : stop.type === "waypoint" ? "Stop en route · " + stop.dayLabel
-        : stop.dayLabel;
+      const nightsLabel = stop.nights ? stop.nights + " night" + (stop.nights > 1 ? "s" : "") : "";
+      const sub = stop.type === "overnight" ? `${stop.date} · ${nightsLabel}`
+        : stop.type === "waypoint" ? `${stop.date} · stop en route`
+        : stop.date;
       li.innerHTML = `
         <button class="stop-row" data-id="${stop.id}">
           <span class="stop-badge ${stop.type}">${badgeText(stop)}</span>
@@ -185,6 +187,7 @@
     if (markers[id]) markers[id].openPopup();
 
     const tags = [];
+    if (stop.date) tags.push(`<span class="tag date">🗓 ${esc(stop.date)}</span>`);
     if (stop.type === "overnight") tags.push(`<span class="tag night">🛏 ${esc(stop.overnight)}</span>`);
     tags.push(`<span class="tag">📅 ${esc(stop.dayLabel)}</span>`);
     if (stop.drive) tags.push(`<span class="tag drive">🚗 ${esc(stop.drive)}</span>`);

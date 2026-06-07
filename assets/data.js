@@ -6,7 +6,7 @@
 
 const TRIP = {
   title: "The McFerren's Summer Euro Trip",
-  subtitle: "A 12-day family loop · Kent → Burgundy → Basel → Alsace → home",
+  subtitle: "29 June – 10 July 2026 · a 12-day family loop · Kent → Burgundy → Basel → Alsace → home",
   totalDriving: "≈ 21–22 hours over 12 days · avg ~1 h 50 / day",
 
   // Stops are listed in travel order. `type` controls how they're drawn:
@@ -363,3 +363,29 @@ const TRIP_IMAGES = {
 
 // Attach photos to their stops.
 TRIP.stops.forEach(function (s) { s.images = TRIP_IMAGES[s.id] || []; });
+
+
+/* ------------------------------------------------------------------
+   Trip dates — anchored on Basel (check-in Thu 2 Jul → check-out
+   Sun 5 Jul 2026). Everything counts out from there. Attached to
+   each stop on load.
+------------------------------------------------------------------ */
+const TRIP_DATES = {
+  "folkestone":   "Mon 29 Jun · Fri 10 Jul 2026",
+  "calais":       "Mon 29 Jun",
+  "reims":        "Mon 29 Jun",
+  "hautvillers":  "Tue 30 Jun",
+  "troyes":       "Tue 30 Jun",
+  "beaune":       "Wed 1 Jul",
+  "basel":        "Thu 2 – Sun 5 Jul",
+  "titisee":      "Sun 5 Jul",
+  "riquewihr":    "Mon 6 Jul",
+  "strasbourg":   "Mon 6 Jul",
+  "heidelberg":   "Tue 7 Jul",
+  "luxembourg":   "Wed 8 Jul",
+  "maastricht":   "Thu 9 Jul",
+  "ghent-bruges": "Fri 10 Jul"
+};
+
+// Attach dates to their stops.
+TRIP.stops.forEach(function (s) { s.date = TRIP_DATES[s.id] || ""; });
