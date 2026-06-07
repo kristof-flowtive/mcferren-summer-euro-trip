@@ -17,7 +17,7 @@
 ------------------------------------------------------------------ */
 
 const TRIP_CONFIG = {
-  SUPABASE_URL: "",       // e.g. "https://abcdxyz.supabase.co"
-  SUPABASE_ANON_KEY: "",  // the public "anon" key
-  FAMILY_EMAIL: ""        // e.g. "mcferren.trip@gmail.com" — the shared login's email
+  SUPABASE_URL: "https://mvqzynftcvepwnrlgcjw.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_44-Inl0myWyxPggKJZNDGA_4RGVC_ll", // public publishable key — safe to commit
+  FAMILY_EMAIL: "kristof@getflowtive.com"  // the shared family login's email
 };

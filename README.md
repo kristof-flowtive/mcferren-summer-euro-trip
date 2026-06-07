@@ -76,11 +76,16 @@ create table hotels (
 -- (With RLS on and no policy for anonymous visitors, the public can't read it.)
 alter table hotels enable row level security;
 
-create policy "family members can read/write"
+-- Lock access to ONLY the shared family login (by its email). Even if someone
+-- else manages to create an account, they still can't read or write the table.
+create policy "only the family login"
   on hotels for all
   to authenticated
-  using (true) with check (true);
+  using      ( (auth.jwt() ->> 'email') = 'YOUR_FAMILY_EMAIL' )
+  with check ( (auth.jwt() ->> 'email') = 'YOUR_FAMILY_EMAIL' );
 ```
+
+> Replace `YOUR_FAMILY_EMAIL` with the email you'll use for the shared login.
 
 **3. Stop strangers from making their own logins.**
 Go to **Authentication → Sign In / Providers → Email** (or **Authentication →
