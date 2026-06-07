@@ -11,31 +11,57 @@
   /* ---------------- Hotel storage layer ---------------- */
   // Presents one async interface; backs onto Supabase if configured, else localStorage.
   const Store = {
-    mode: "local",
+    mode: "local",   // "local" or "cloud"
     client: null,
     cache: {},
+    authed: false,   // signed into the shared family login (cloud mode only)
+    email: "",
     LOCAL_KEY: "mcferren-hotels",
 
     async init() {
       const cfg = window.TRIP_CONFIG || {};
+      this.email = cfg.FAMILY_EMAIL || "";
       if (cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY) {
         try {
           await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");
           this.client = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
           this.mode = "cloud";
+          // Restore a previous session so unlocking persists across visits.
+          const { data } = await this.client.auth.getSession();
+          this.authed = !!(data && data.session);
+          if (this.authed) await this.refresh();
         } catch (e) {
           console.warn("Supabase failed to load — falling back to local storage.", e);
           this.mode = "local";
         }
       }
-      await this.refresh();
+      if (this.mode === "local") this.cache = this.readLocal();
       return this.mode;
+    },
+
+    // True when the shared database is in use but nobody's unlocked it yet.
+    get locked() { return this.mode === "cloud" && !this.authed; },
+
+    async signIn(password) {
+      if (this.mode !== "cloud") return false;
+      const { error } = await this.client.auth.signInWithPassword({ email: this.email, password });
+      if (error) { console.warn(error.message); return false; }
+      this.authed = true;
+      await this.refresh();
+      return true;
+    },
+
+    async signOut() {
+      if (this.client) await this.client.auth.signOut();
+      this.authed = false;
+      this.cache = {};
     },
 
     async refresh() {
       if (this.mode === "cloud") {
+        if (!this.authed) { this.cache = {}; return; }
         const { data, error } = await this.client.from("hotels").select("stop_id, data");
-        if (error) { console.warn(error); this.cache = this.readLocal(); return; }
+        if (error) { console.warn(error); this.cache = {}; return; }
         const map = {};
         (data || []).forEach((row) => { map[row.stop_id] = row.data; });
         this.cache = map;
@@ -60,20 +86,22 @@
         const { error } = await this.client
           .from("hotels")
           .upsert({ stop_id: stopId, data: hotel }, { onConflict: "stop_id" });
-        if (error) { console.warn(error); alert("Couldn't save to the shared database — saved locally instead."); this.writeLocal(); }
-      } else {
-        this.writeLocal();
+        if (error) { console.warn(error); alert("Couldn't save to the shared database: " + error.message); return false; }
+        return true;
       }
+      this.writeLocal();
+      return true;
     },
 
     async remove(stopId) {
       delete this.cache[stopId];
       if (this.mode === "cloud") {
         const { error } = await this.client.from("hotels").delete().eq("stop_id", stopId);
-        if (error) console.warn(error);
-      } else {
-        this.writeLocal();
+        if (error) { console.warn(error); alert("Couldn't remove from the shared database: " + error.message); return false; }
+        return true;
       }
+      this.writeLocal();
+      return true;
     }
   };
 
@@ -292,6 +320,38 @@
   /* ---------------- Hotel card (view / form) ---------------- */
   function renderHotel(stop) {
     const mount = $("#hotel-mount");
+
+    // Private wall: when the shared database is in use, require the family
+    // password before any hotel details can be viewed or edited.
+    if (Store.locked) {
+      mount.innerHTML = `
+        <div class="hotel-card lock">
+          <div class="lock-title">🔒 Bookings are private</div>
+          <p class="lock-text">Hotel details are shared with the family and kept behind a password. Enter it to view and add bookings.</p>
+          <form class="lock-form" id="unlock-form">
+            <input type="password" id="unlock-pw" placeholder="Family password" autocomplete="current-password" />
+            <button type="submit" class="btn btn-primary">Unlock</button>
+          </form>
+          <div class="lock-err" id="unlock-err" hidden>That password didn't work — try again.</div>
+        </div>`;
+      $("#unlock-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const pw = $("#unlock-pw").value;
+        const btn = e.submitter; if (btn) { btn.disabled = true; btn.textContent = "Unlocking…"; }
+        const ok = await Store.signIn(pw);
+        if (ok) {
+          updateBanner();
+          renderList();
+          renderHotel(stop);
+        } else {
+          const err = $("#unlock-err"); if (err) err.hidden = false;
+          if (btn) { btn.disabled = false; btn.textContent = "Unlock"; }
+          const pwEl = $("#unlock-pw"); if (pwEl) { pwEl.value = ""; pwEl.focus(); }
+        }
+      });
+      return;
+    }
+
     const h = Store.get(stop.id);
 
     // Maastricht is covered by relatives — gentle note instead of a form.
@@ -431,11 +491,21 @@
     });
   }
 
-  function renderStorageBanner(mode) {
+  function updateBanner() {
     const el = $("#storage-banner");
-    if (mode === "cloud") {
+    el.classList.remove("cloud", "locked");
+    if (Store.mode === "cloud" && Store.authed) {
       el.classList.add("cloud");
-      el.innerHTML = "🌍 Hotel bookings are <b>shared across the family</b> — everyone sees updates on every device.";
+      el.innerHTML = `🔓 Unlocked · hotel bookings are <b>shared across the family</b>. <button class="link-btn" id="lock-btn">Lock again</button>`;
+      $("#lock-btn").addEventListener("click", async () => {
+        await Store.signOut();
+        updateBanner();
+        renderList();
+        if (currentStop) renderHotel(TRIP.stops.find((s) => s.id === currentStop));
+      });
+    } else if (Store.mode === "cloud") {
+      el.classList.add("locked");
+      el.innerHTML = "🔒 Hotel bookings are <b>private</b> — open any stop and enter the family password to view them.";
     } else {
       el.innerHTML = "💾 Hotel bookings save to <b>this device</b>. To share them across the family, see the README → Supabase setup.";
     }
@@ -447,8 +517,8 @@
   async function boot() {
     renderChrome();
     initMap();
-    const mode = await Store.init();
-    renderStorageBanner(mode);
+    await Store.init();
+    updateBanner();
     renderList();
   }
 

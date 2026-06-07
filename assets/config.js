@@ -1,16 +1,23 @@
 /* ------------------------------------------------------------------
-   Hotel storage configuration
+   Hotel storage + private-access configuration
    ------------------------------------------------------------------
-   By default, hotel details save to THIS browser only (localStorage) —
-   no setup needed, works immediately.
+   By default (all blank), hotel details save to THIS browser only
+   (localStorage) — no setup, works immediately, but not shared.
 
-   To SHARE hotel bookings across the whole family on every device,
-   create a free Supabase project (5 minutes) and paste the two values
-   below. See README.md → "Sharing hotels across the family" for the
-   step-by-step. Leave them blank to keep using local-only storage.
+   To SHARE hotel bookings across the family AND keep them behind a
+   password, fill in all three values below after following the
+   step-by-step in README.md → "Shared, password-protected hotels".
+
+   - SUPABASE_URL / SUPABASE_ANON_KEY: from Supabase → Project
+     Settings → API. (The anon key is safe to commit — it's public by
+     design and protected by the database's security rules.)
+   - FAMILY_EMAIL: the email of the ONE shared login you create in
+     Supabase. Everyone uses this same login; only the password is
+     typed into the site (never store the password here).
 ------------------------------------------------------------------ */
 
 const TRIP_CONFIG = {
   SUPABASE_URL: "",       // e.g. "https://abcdxyz.supabase.co"
-  SUPABASE_ANON_KEY: ""   // the public "anon" key from Supabase → Project Settings → API
+  SUPABASE_ANON_KEY: "",  // the public "anon" key
+  FAMILY_EMAIL: ""        // e.g. "mcferren.trip@gmail.com" — the shared login's email
 };
