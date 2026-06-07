@@ -238,7 +238,8 @@
       <p class="summary">${esc(stop.summary)}</p>
       <div class="section-title">✨ Things to do</div>
       <ul class="things">${things}</ul>
-      <div class="section-title">🛏 Where we're staying</div>
+      ${staysHtml(stop)}
+      <div class="section-title">🛏 Our confirmed booking</div>
       <div id="hotel-mount"></div>
     `;
     $("#back-btn").addEventListener("click", showList);
@@ -249,6 +250,36 @@
     $("#list-view").hidden = true;
     v.hidden = false;
     $("#detail-pane").scrollTop = 0;
+  }
+
+  function staysHtml(stop) {
+    const st = stop.stays;
+    if (!st) return "";
+    if (!st.options) {
+      return st.sorted
+        ? `<div class="section-title">🏠 Accommodation</div>
+           <div class="stay-note ok">✓ ${esc(st.sorted)}</div>`
+        : "";
+    }
+    const prio = st.priority ? `<span class="prio-badge">📌 ${esc(st.priority)}</span>` : "";
+    const note = st.note ? `<div class="stay-note warn">⚠️ ${esc(st.note)}</div>` : "";
+    const intro = `<p class="stay-intro">Shortlisted for kitchen, parking &amp; cot, ~€100–180/night. <b>⭐ = top pick.</b></p>`;
+    const cards = st.options.map((o) => {
+      const chips = [o.kind, o.price, o.rating].filter(Boolean)
+        .map((c) => `<span class="stay-chip">${esc(c)}</span>`).join("");
+      const links = o.links.map((l) =>
+        `<a class="stay-link" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join("");
+      return `<div class="stay-card${o.top ? " top" : ""}">
+          <div class="stay-name">${o.top ? "⭐ " : ""}${esc(o.name)}</div>
+          <div class="stay-chips">${chips}</div>
+          <p class="stay-desc">${esc(o.desc)}</p>
+          <p class="stay-why"><b>Why:</b> ${esc(o.why)}</p>
+          <div class="stay-links">${links}</div>
+        </div>`;
+    }).join("");
+    return `<div class="section-title">🏠 Accommodation — book one ${prio}</div>
+            ${intro}${note}
+            <div class="stay-list">${cards}</div>`;
   }
 
   function galleryHtml(stop) {

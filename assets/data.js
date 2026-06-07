@@ -389,3 +389,135 @@ const TRIP_DATES = {
 
 // Attach dates to their stops.
 TRIP.stops.forEach(function (s) { s.date = TRIP_DATES[s.id] || ""; });
+
+
+/* ------------------------------------------------------------------
+   Accommodation shortlist (public — for choosing & booking now).
+   3 vetted options per overnight stop; ⭐ top pick flagged. Basel is
+   already sorted, Maastricht is relatives. Source: accommodation-options.md
+------------------------------------------------------------------ */
+const TRIP_STAYS = {
+  "reims": {
+    options: [
+      { top: true, name: "Residhome Appart Hotel Reims Centre", kind: "Aparthotel", price: "~€89–120/night", rating: "8.0/10 · 1,863 reviews",
+        desc: "6 rue de Courcelles — 200 m from the station, 10–12 min walk to the cathedral. Kitchenette in every studio; on-site parking €10/night; free baby cot.",
+        why: "Ticks every requirement in one go — and after the 2 h 40 from Calais you can walk straight to dinner.",
+        links: [ { label: "Residhome", url: "https://www.residhome.com/uk/hotel-residence-aparthotel-reims-233.html" }, { label: "Booking.com", url: "https://www.booking.com/hotel/fr/residhome-reims-centre.en-gb.html" } ] },
+      { name: "Appart'City Confort Reims Centre", kind: "Aparthotel", price: "~€63–110/night", rating: "8.1/10",
+        desc: "700 m from the cathedral. Full kitchenette.",
+        why: "Most walkable + cheapest — but no on-site parking (street/public nearby), the one caveat with a loaded car.",
+        links: [ { label: "Appart'City", url: "https://www.appartcity.com/en/destinations/france/grand-est/reims/reims-centre" }, { label: "Booking.com", url: "https://www.booking.com/hotel/fr/appart-city-reims-centre.html" } ] },
+      { name: "Séjours & Affaires Reims Clairmarais", kind: "Aparthotel", price: "~€70–100/night", rating: "7.9/10",
+        desc: "Near the station, ~15 min walk to the cathedral. Kitchenette; on-site parking €9/day; cot on request.",
+        why: "Cheapest secure-parking fallback; functional rather than charming.",
+        links: [ { label: "Séjours & Affaires", url: "https://www.sejours-affaires.com/uk/hotel-residence-aparthotel-reims-177.html" } ] }
+    ]
+  },
+  "troyes": {
+    options: [
+      { top: true, name: "SmartAppart Troyes", kind: "Aparthotel", price: "~€60–90/night", rating: "8.6/10 · best-reviewed in Troyes",
+        desc: "In the old town, 10 min walk from the station. Equipped kitchenette; cots offered; paid public car park directly across the street.",
+        why: "Right in the half-timbered centre at a great price; only compromise is the garage being across the road, not on-site.",
+        links: [ { label: "SmartAppart", url: "https://www.smart-appart.fr/fr/hotels/troyes-smartappart-troyes/5" }, { label: "Booking.com", url: "https://www.booking.com/hotel/fr/smartappart-troyes.html" } ] },
+      { name: "Kosy Appart'hotels Troyes City & Park", kind: "Aparthotel", price: "~€70–110/night", rating: "7.7/10 · no A/C",
+        desc: "~800 m from the cathedral. Kitchenette; on-site parking ~€7/night; cots subject to availability. No A/C — worth noting for a July heatwave.",
+        why: "The choice if you want the car on the property itself.",
+        links: [ { label: "Kosy", url: "https://en.kosy-apparthotels.com/troyes-city-park/" }, { label: "Booking.com", url: "https://www.booking.com/hotel/fr/apparthotel-city-amp-park.en-gb.html" } ] },
+      { name: "Appart'Hôtel Sainte Trinité", kind: "Apartments · character", price: "~€90–140/night", rating: "Mixed reviews",
+        desc: "7 apartments in a converted medieval building, heart of the old town. Full kitchenette + dishwasher, A/C; secure on-site parking ~€20/day (tight spaces — reserve with the room). Narrow medieval stairs — weigh that with baby + luggage.",
+        why: "The character pick if atmosphere beats convenience.",
+        links: [ { label: "Booking.com", url: "https://www.booking.com/hotel/fr/appart-39-sainte-trinite.html" } ] }
+    ]
+  },
+  "beaune": {
+    priority: "Book 2nd",
+    options: [
+      { top: true, name: "Résidence Beaune Sweet Home", kind: "Serviced apartments", price: "~€130–180/night", rating: "9.2/10 · 115 reviews",
+        desc: "4 air-conditioned apartments, 200–300 m from the Hospices. Full kitchens; secure covered parking included; cot + highchair on request.",
+        why: "The strongest all-round match of the whole trip — explicitly baby-equipped, dead central, parking included.",
+        links: [ { label: "beaune-sweethome.fr", url: "https://www.beaune-sweethome.fr/en/the-apartments/" }, { label: "Booking.com", url: "https://www.booking.com/hotel/fr/beaune-allerey.html" } ] },
+      { name: "La Maison de Maurice", kind: "Designer apartments", price: "~€140–155/night", rating: "9.1/10 · 463 reviews",
+        desc: "Designer apartments above a wine bar, 100 m from Notre-Dame. Full kitchen; cots can be added; no on-site parking (public garage ~300 m).",
+        why: "Superb reviews and the most central address possible; you trade parking for a 300 m walk.",
+        links: [ { label: "lamaisondemaurice-beaune.com", url: "https://www.lamaisondemaurice-beaune.com/la-maison-de-maurice-beaune-en.html" }, { label: "Booking.com", url: "https://www.booking.com/hotel/fr/la-maison-de-maurice.html" } ] },
+      { name: "Chez Marie – Centre – Parking privé", kind: "Host-run apartment", price: "~€110–140/night", rating: "Small review base",
+        desc: "1-bedroom apartment with terrace, central. Full kitchen; free private on-site parking; separate bedroom = easy travel-cot setup (message host re: cot).",
+        why: "Only central option with free on-site parking and a proper separate bedroom for baby's sleep.",
+        links: [ { label: "Booking.com", url: "https://www.booking.com/hotel/fr/chez-coco-t2-proche-centre-avec-parking-47-terrasse.fr.html" } ] }
+    ]
+  },
+  "titisee": {
+    priority: "Book 1st",
+    note: "Peak season + small properties — book these first, ideally this month.",
+    options: [
+      { top: true, name: "Ferienwohnungen DaHeim Titisee (Hinterzarten)", kind: "Holiday apartments", price: "~€94–130/night", rating: "9.2/10",
+        desc: "Family-run apartments on the Hinterzarten side of the lake. Full kitchen incl. oven + dishwasher; free parking; cot €6/night.",
+        why: "Proper kitchen, free parking, cheap cot, top score, real Black Forest character.",
+        links: [ { label: "Booking.com", url: "https://www.booking.com/hotel/de/ferienwohnungen-daheim-titisee.html" }, { label: "daheim.ferienhaeusle.com", url: "https://daheim.ferienhaeusle.com/" } ] },
+      { name: "Appartements Waldrose", kind: "Lakefront apartments", price: "~€110–160/night", rating: "8.9/10",
+        desc: "9 apartments directly on the lakefront (Bruderhalde, away from the touristy promenade), own boat dock. Kitchenette; free parking; cot €10/stay.",
+        why: "Best lake position — morning pram walk along the water from your door.",
+        links: [ { label: "Booking.com", url: "https://www.booking.com/hotel/de/appartements-waldrose.html" } ] },
+      { name: "Ferienhaus Frei Apartments", kind: "Apartments · best value", price: "~€80–130/night", rating: "Book direct",
+        desc: "Family-run apartments in Titisee-Neustadt, short drive to the lake. Full kitchens; free parking; cot + highchair free.",
+        why: "The value fallback if the lakeside two are sold out.",
+        links: [ { label: "ferienhaus-frei.com", url: "https://ferienhaus-frei.com/" } ] }
+    ]
+  },
+  "strasbourg": {
+    note: "Crit'Air sticker required for the low-emission zone (ANPR-enforced, €68 fine) — order now from certificat-air.gouv.fr, 2–4 weeks to the UK. All three picks have on-site parking.",
+    options: [
+      { top: true, name: "Aparthotel Adagio Access Strasbourg Petite France", kind: "Aparthotel", price: "~€100–150/night", rating: "8.1/10 · 3,500+ reviews",
+        desc: "117-unit aparthotel, 5 min walk to Petite France. Kitchenette in every unit; on-site parking ~€15/night (reserve); cot on request.",
+        why: "Best location-plus-parking combination — park inside the zone and stroll into Petite France with the pram.",
+        links: [ { label: "Adagio", url: "https://www.adagio-city.com/gb/hotel-8446-aparthotel-adagio-access-strasbourg-petite-france/index.shtml" }, { label: "Booking.com", url: "https://www.booking.com/hotel/fr/adagio-access-strasbourg-petite-france.html" } ] },
+      { name: "Citadines Kléber Strasbourg", kind: "Aparthotel · central", price: "~€120–180/night", rating: "8.4/10",
+        desc: "On Place Kléber — dead centre, 8–10 min to both Petite France and the cathedral. Best kitchenette of the three (stovetop + dishwasher); secure underground parking ~€12–20/day; cot on request.",
+        why: "The most central, with the best-equipped kitchen — priciest of the three.",
+        links: [ { label: "Booking.com", url: "https://www.booking.com/hotel/fr/citadines-aparthotel-strasbourg.html" } ] },
+      { name: "Odalys City Strasbourg Green Marsh", kind: "4★ residence · value", price: "~€95–140/night", rating: "8.0/10",
+        desc: "Near the station, ~10 min flat walk to Petite France. Kitchenette + dishwasher; parking ~€12/day (limited — reserve at booking); cot on request.",
+        why: "Good-value backup; station quarter is less charming but the walk is easy with a pram.",
+        links: [ { label: "Odalys", url: "https://www.odalys-vacances.com/location-campagne/alsace-lorraine/strasbourg/green-marsh.html" } ] }
+    ]
+  },
+  "heidelberg": {
+    note: "All three sit just outside the Altstadt by design — Altstadt parking is scarce and the centre is an Umweltzone (order the green Umweltplakette ~2–3 weeks ahead, ~€6–15).",
+    options: [
+      { top: true, name: "Staycity Aparthotels Heidelberg", kind: "Aparthotel", price: "~€110–150/night", rating: "8.6/10 · 6,000+ reviews",
+        desc: "In Bahnstadt, 7 min from the Hauptbahnhof; Altstadt ~10–15 min by tram. Full kitchenette incl. dishwasher; on-site garage ~€15–20 (limited — mention the car at booking); free cot AND highchair.",
+        why: "The only Heidelberg option ticking every box outright.",
+        links: [ { label: "staycity.com", url: "https://www.staycity.com/heidelberg/heidelberg" }, { label: "Booking.com", url: "https://www.booking.com/hotel/de/staycity-aparthotels-heidelberg-de.html" } ] },
+      { name: "Aparthotel Adagio Heidelberg", kind: "Aparthotel · new 2024", price: "~€120–160/night", rating: "8.3/10",
+        desc: "New aparthotel opposite the Hauptbahnhof. Full kitchen; underground garage ~€15–25/day; crib for a small fee. On-site grocery shop — handy for baby supplies.",
+        why: "Newest rooms, everything in one building.",
+        links: [ { label: "Booking.com", url: "https://www.booking.com/hotel/de/aparthotel-adagio-heidelberg.html" } ] },
+      { name: "BoardingHouse Heidelberg", kind: "Serviced apartments", price: "~€95–135/night", rating: "7.9/10",
+        desc: "By Bismarckplatz — closest to the Altstadt: ~14 min walk. Kitchenette; underground parking ~€15/day; cot unconfirmed (bring travel cot).",
+        why: "Best walking position — leave the car garaged the whole stay.",
+        links: [ { label: "Booking.com", url: "https://www.booking.com/hotel/de/boardingworld-heidelberg.html" } ] }
+    ]
+  },
+  "luxembourg": {
+    priority: "Book 3rd",
+    note: "Luxembourg is pricey midweek, but all public transport is free nationwide — so a non-central base costs nothing in practice.",
+    options: [
+      { top: true, name: "The Central Kirchberg – Smart ApartHotel", kind: "Aparthotel", price: "~€110–160/night", rating: "8.9/10 · 1,020 reviews",
+        desc: "86 apartments in Neudorf/Kirchberg; free bus/tram to the old town in 10–15 min. Full kitchen; secure basement garage €20/night; crib on request.",
+        why: "Best value-for-requirements in an expensive city — and the tight Ville Haute parking never becomes your problem.",
+        links: [ { label: "thecentral.lu", url: "https://thecentral.lu/smart-aparthotel-luxembourg-kirchberg/" }, { label: "Booking.com", url: "https://www.booking.com/hotel/lu/the-central-kirchberg-smart-aparthotel.html" } ] },
+      { name: "The Central City – Luxury Serviced Residence", kind: "Serviced suites · above budget", price: "~€180–220+/night", rating: "No cribs — bring travel cot",
+        desc: "Designer suites in the Gare district, 10–12 min flat walk to the old town. Full kitchen + in-unit laundry (useful mid-trip!); car-elevator parking.",
+        why: "The stretch option: most walkable with secure indoor parking and a washing machine.",
+        links: [ { label: "Booking.com", url: "https://www.booking.com/hotel/lu/the-central.html" } ] },
+      { name: "Key Inn Appart Hotel Belair", kind: "Family residences · value", price: "~€100–140/night", rating: "~8/10",
+        desc: "Family-oriented residences in quiet Belair, 10–15 min walk to the centre. Kitchenette; street parking only (overnight generally free in Belair); cot likely arrangeable — email ahead.",
+        why: "Budget pick with family-sized units; weakest parking of the three.",
+        links: [ { label: "key-inn.com", url: "https://www.key-inn.com/" }, { label: "Booking.com", url: "https://www.booking.com/hotel/lu/key-inn-appart-office.html" } ] }
+    ]
+  },
+  "basel": { sorted: "Basel is already sorted — no booking needed here." }
+};
+
+// Attach accommodation options to their stops.
+TRIP.stops.forEach(function (s) { s.stays = TRIP_STAYS[s.id] || null; });

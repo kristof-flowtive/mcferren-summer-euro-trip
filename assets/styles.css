@@ -322,6 +322,51 @@ h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; margin: 
 .thing b { font-size: 14.5px; color: var(--ink); }
 .thing p { margin: 3px 0 0; font-size: 13px; color: var(--ink-soft); line-height: 1.45; }
 
+/* ---------- Accommodation options (public) ---------- */
+.prio-badge {
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 11px; font-weight: 800; letter-spacing: .3px;
+  background: var(--gold); color: #fff;
+  padding: 3px 9px; border-radius: 20px; vertical-align: middle;
+}
+.stay-intro { font-size: 13px; color: var(--ink-soft); margin: 0 0 10px; }
+.stay-intro b { color: var(--terracotta-d); }
+.stay-note {
+  font-size: 13px; line-height: 1.45; border-radius: var(--radius-sm);
+  padding: 10px 12px; margin: 0 0 12px;
+}
+.stay-note.warn { background: #fbf0d8; border: 1px solid #ecd39a; color: #8a6321; }
+.stay-note.ok { background: #e8f0e4; border: 1px solid #cfe0c8; color: var(--sage-d); font-weight: 700; }
+
+.stay-list { display: flex; flex-direction: column; gap: 11px; }
+.stay-card {
+  background: var(--cream); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: 13px 14px;
+}
+.stay-card.top {
+  background: linear-gradient(160deg, #fff, #f3f6ef);
+  border-color: var(--sage);
+  box-shadow: inset 0 0 0 1px rgba(110,139,106,0.22);
+}
+.stay-name { font-family: "Fraunces", serif; font-size: 16px; font-weight: 600; color: var(--ink); }
+.stay-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.stay-chip {
+  font-size: 11.5px; font-weight: 700; color: var(--ink-soft);
+  background: var(--paper); border: 1px solid var(--line);
+  padding: 3px 8px; border-radius: 20px;
+}
+.stay-desc { font-size: 13px; line-height: 1.5; color: var(--ink); margin: 0 0 6px; }
+.stay-why { font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); margin: 0 0 10px; }
+.stay-why b { color: var(--terracotta-d); }
+.stay-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.stay-link {
+  font-size: 13px; font-weight: 800; text-decoration: none;
+  color: #fff; background: var(--terracotta);
+  padding: 7px 12px; border-radius: 9px; transition: filter .15s;
+}
+.stay-link:hover { filter: brightness(1.07); }
+.stay-card:not(.top) .stay-link { background: var(--sage); }
+
 /* ---------- Hotel card ---------- */
 .hotel-card {
   margin-top: 14px;
