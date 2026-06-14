@@ -22,7 +22,10 @@
     LOCAL_KEY: "mcferren-hotels",
 
     async init() {
-      const cfg = window.TRIP_CONFIG || {};
+      // NOTE: a top-level `const TRIP_CONFIG` in config.js lives in the shared
+      // script scope, NOT on `window` — so read it as a bare identifier (with a
+      // window fallback in case it's ever assigned that way instead).
+      const cfg = (typeof TRIP_CONFIG !== "undefined" && TRIP_CONFIG) || window.TRIP_CONFIG || {};
       this.email = cfg.FAMILY_EMAIL || "";
       this.configured = !!(cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY);
       if (this.configured) {
