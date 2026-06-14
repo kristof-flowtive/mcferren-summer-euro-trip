@@ -168,14 +168,25 @@
       maxZoom: 19
     }).addTo(map);
 
-    // Route polyline following stop order. The first and last legs (the
-    // Channel crossing) are drawn as a dashed "shuttle" line.
-    const pts = TRIP.stops.map((s) => [s.lat, s.lng]);
-    const n = pts.length;
+    // The Channel crossing (Le Shuttle / tunnel) — a dashed straight line,
+    // because it's under the sea, not a road to follow.
+    const folkestone = [TRIP.stops[0].lat, TRIP.stops[0].lng];
+    const calais = [TRIP.stops[1].lat, TRIP.stops[1].lng];
+    L.polyline([folkestone, calais], { color: "#CB6843", weight: 2.5, dashArray: "3 7", opacity: 0.7 }).addTo(map);
 
-    L.polyline([pts[0], pts[1]], { color: "#CB6843", weight: 3, dashArray: "4 8", opacity: 0.85 }).addTo(map); // Folkestone→Calais
-    L.polyline(pts.slice(1, n - 1), { color: "#CB6843", weight: 3.5, opacity: 0.85, lineJoin: "round" }).addTo(map); // the loop
-    L.polyline([pts[n - 2], pts[n - 1], pts[0]], { color: "#CB6843", weight: 3, dashArray: "4 8", opacity: 0.6 }).addTo(map); // Ghent→Calais→home
+    // Real road-following driving routes (geometry baked into routes.js).
+    if (typeof TRIP_ROUTES !== "undefined") {
+      // White casing underneath for a clean "route line" look...
+      TRIP_ROUTES.forEach((leg) =>
+        L.polyline(leg.path, { color: "#FFFFFF", weight: 6, opacity: 0.55, lineJoin: "round", lineCap: "round" }).addTo(map));
+      // ...then the terracotta route on top.
+      TRIP_ROUTES.forEach((leg) =>
+        L.polyline(leg.path, { color: "#CB6843", weight: 3.4, opacity: 0.95, lineJoin: "round", lineCap: "round" }).addTo(map));
+    } else {
+      // Fallback: straight lines through the stops if route data is unavailable.
+      L.polyline(TRIP.stops.slice(1).map((s) => [s.lat, s.lng]),
+        { color: "#CB6843", weight: 3, opacity: 0.8, lineJoin: "round" }).addTo(map);
+    }
 
     TRIP.stops.forEach((stop) => {
       const cls = stop.type;
