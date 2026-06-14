@@ -521,3 +521,24 @@ const TRIP_STAYS = {
 
 // Attach accommodation options to their stops.
 TRIP.stops.forEach(function (s) { s.stays = TRIP_STAYS[s.id] || null; });
+
+
+/* ------------------------------------------------------------------
+   Day-by-day schedule (ISO dates) — powers the countdown / "today"
+   banner and the navigate-today's-drive link. `drive` lists the day's
+   road legs (from -> [via] -> to); null on the Basel rest days.
+------------------------------------------------------------------ */
+const TRIP_SCHEDULE = [
+  { day: 1,  date: "2026-06-29", overnight: "reims",      drive: { from: "calais", to: "reims", via: [], label: "Calais → Reims" }, note: "Le Shuttle crossing, then drive to Reims" },
+  { day: 2,  date: "2026-06-30", overnight: "troyes",     drive: { from: "reims", to: "troyes", via: ["hautvillers"], label: "Reims → Hautvillers → Troyes" } },
+  { day: 3,  date: "2026-07-01", overnight: "beaune",     drive: { from: "troyes", to: "beaune", via: [], label: "Troyes → Beaune" } },
+  { day: 4,  date: "2026-07-02", overnight: "basel",      drive: { from: "beaune", to: "basel", via: [], label: "Beaune → Basel" } },
+  { day: 5,  date: "2026-07-03", overnight: "basel",      drive: null, note: "Full day in Basel" },
+  { day: 6,  date: "2026-07-04", overnight: "basel",      drive: null, note: "Basel — second day / day trips (Colmar, Rheinfelden, Vitra…)" },
+  { day: 7,  date: "2026-07-05", overnight: "titisee",    drive: { from: "basel", to: "titisee", via: [], label: "Basel → Titisee" } },
+  { day: 8,  date: "2026-07-06", overnight: "strasbourg", drive: { from: "titisee", to: "strasbourg", via: ["riquewihr"], label: "Titisee → Riquewihr → Strasbourg" } },
+  { day: 9,  date: "2026-07-07", overnight: "heidelberg", drive: { from: "strasbourg", to: "heidelberg", via: [], label: "Strasbourg → Heidelberg" } },
+  { day: 10, date: "2026-07-08", overnight: "luxembourg", drive: { from: "heidelberg", to: "luxembourg", via: [], label: "Heidelberg → Luxembourg" } },
+  { day: 11, date: "2026-07-09", overnight: "maastricht", drive: { from: "luxembourg", to: "maastricht", via: [], label: "Luxembourg → Maastricht" } },
+  { day: 12, date: "2026-07-10", overnight: "folkestone", drive: { from: "maastricht", to: "calais", via: ["ghent-bruges"], label: "Maastricht → Ghent/Bruges → Calais → home" }, note: "Last leg home via a Belgian lunch stop" }
+];

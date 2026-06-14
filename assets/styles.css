@@ -88,6 +88,56 @@ h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; margin: 
 .stat .num { display: block; font-family: "Fraunces", serif; font-size: 22px; font-weight: 700; color: var(--terracotta); line-height: 1; }
 .stat .lab { display: block; font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--ink-soft); margin-top: 4px; }
 
+/* ---------- Trip status banner (countdown / today) ---------- */
+.trip-status {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 11px clamp(16px, 4vw, 40px);
+  display: flex;
+  align-items: center;
+  gap: 12px 14px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.trip-status.before { background: linear-gradient(100deg, #f3ede0, #efe6d4); }
+.trip-status.during { background: linear-gradient(100deg, #fbeede, #f7e3c9); }
+.trip-status.after  { background: linear-gradient(100deg, #e8f0e4, #dcebd6); }
+.ts-pill {
+  font-weight: 800; font-size: 12.5px; letter-spacing: .2px;
+  padding: 5px 12px; border-radius: 20px; white-space: nowrap;
+  background: var(--terracotta); color: #fff;
+}
+.trip-status.before .ts-pill { background: var(--sage-d); }
+.trip-status.after .ts-pill  { background: var(--sage-d); }
+.ts-main { color: var(--ink); font-weight: 600; }
+.ts-main b { color: var(--terracotta-d); font-weight: 800; }
+.ts-nav { display: inline-flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+
+/* Map / navigation buttons (shared) */
+.maps-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 12px 0 2px; }
+.maps-label { font-size: 12.5px; font-weight: 800; color: var(--ink-soft); }
+.map-btn {
+  font-size: 13px; font-weight: 800; text-decoration: none;
+  padding: 7px 12px; border-radius: 9px; white-space: nowrap;
+  border: 1px solid var(--line); transition: filter .15s, background .15s;
+}
+.map-btn.g { background: var(--terracotta); color: #fff; border-color: transparent; }
+.map-btn.g:hover { filter: brightness(1.07); }
+.map-btn.a { background: var(--paper); color: var(--ink); }
+.map-btn.a:hover { border-color: var(--terracotta); color: var(--terracotta-d); }
+.ts-nav .map-btn.a { background: rgba(255,255,255,0.7); }
+
+/* "Today" highlight in the list */
+.today-tag {
+  font-size: 10px; font-weight: 800; letter-spacing: .3px; text-transform: uppercase;
+  color: #fff; background: var(--gold); padding: 2px 7px; border-radius: 20px;
+}
+.stop-row.is-today { border-color: var(--gold); box-shadow: inset 0 0 0 1px rgba(216,154,74,0.4); background: #fffaf0; }
+
+/* Hotel navigate row */
+.hotel-nav { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+
 /* ---------- Layout ---------- */
 .layout {
   flex: 1;
@@ -156,6 +206,26 @@ h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; margin: 
 .pin.waypoint  { width: 22px; height: 22px; background: var(--sage); color: #fff; font-size: 11px; border-width: 2px; }
 .pin-wrap:hover .pin { transform: rotate(-45deg) scale(1.12); }
 .pin.active { outline: 3px solid var(--gold); outline-offset: 1px; }
+.pin.today-pin { box-shadow: 0 0 0 4px rgba(216,154,74,0.55), 0 3px 7px rgba(60,40,20,0.35); animation: todayPulse 1.8s ease-in-out infinite; }
+@keyframes todayPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(216,154,74,0.5), 0 3px 7px rgba(60,40,20,0.35); }
+  50%      { box-shadow: 0 0 0 8px rgba(216,154,74,0.12), 0 3px 7px rgba(60,40,20,0.35); }
+}
+
+/* Drive-time labels along the route */
+.drive-label-wrap { background: none; border: none; }
+.drive-label {
+  display: inline-block;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 11px; font-weight: 800; color: var(--ink);
+  background: rgba(255,253,248,0.92);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 1px 7px;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(80,55,30,0.18);
+}
+.drive-label.shuttle { color: var(--ink-soft); font-weight: 700; border-style: dashed; }
 
 /* ---------- Detail pane ---------- */
 .detail-pane {

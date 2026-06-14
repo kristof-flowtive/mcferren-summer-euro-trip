@@ -156,6 +156,58 @@
     stop.type === "overnight" ? (stop.nights > 1 ? stop.nights + "★" : "★")
     : stop.type === "endpoint" ? "⌂" : "•";
 
+  const stopById = (id) => TRIP.stops.find((s) => s.id === id);
+
+  /* ---------------- Maps / navigation links ---------------- */
+  const gmapsPlace = (stop) => `https://www.google.com/maps/search/?api=1&query=${stop.lat}%2C${stop.lng}`;
+  const amapsPlace = (stop) => `https://maps.apple.com/?ll=${stop.lat},${stop.lng}&q=${encodeURIComponent(stop.name)}`;
+  const gmapsAddr = (addr) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
+  const amapsAddr = (addr) => `https://maps.apple.com/?q=${encodeURIComponent(addr)}`;
+  function gmapsDir(drive) {
+    const o = stopById(drive.from), d = stopById(drive.to);
+    let u = `https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=${o.lat},${o.lng}&destination=${d.lat},${d.lng}`;
+    if (drive.via && drive.via.length) {
+      u += "&waypoints=" + drive.via.map((id) => { const s = stopById(id); return `${s.lat},${s.lng}`; }).join("|");
+    }
+    return u;
+  }
+  function amapsDir(drive) {
+    const o = stopById(drive.from), d = stopById(drive.to);
+    return `https://maps.apple.com/?saddr=${o.lat},${o.lng}&daddr=${d.lat},${d.lng}&dirflg=d`;
+  }
+  function fmtMins(m) {
+    if (!m) return "";
+    const h = Math.floor(m / 60), mm = m % 60;
+    return h ? (mm ? `${h} h ${mm}` : `${h} h`) : `${mm} min`;
+  }
+  function fmtDate(iso) {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+  }
+
+  /* ---------------- Trip state (countdown / today) ---------------- */
+  let tripState = null;
+  function computeTripState() {
+    const sched = (typeof TRIP_SCHEDULE !== "undefined") ? TRIP_SCHEDULE : null;
+    if (!sched) return null;
+    const parse = (iso) => { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d); };
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const first = parse(sched[0].date), last = parse(sched[sched.length - 1].date);
+    if (today < first) return { phase: "before", daysToGo: Math.round((first - today) / 86400000), firstLabel: fmtDate(sched[0].date) };
+    if (today > last) return { phase: "after" };
+    let idx = 0;
+    for (let i = 0; i < sched.length; i++) if (parse(sched[i].date) <= today) idx = i;
+    return { phase: "during", today: sched[idx], tomorrow: sched[idx + 1] || null };
+  }
+  // Which TRIP_ROUTES legs make up a day's drive (from -> via… -> to).
+  function legsForDrive(drive) {
+    if (typeof TRIP_ROUTES === "undefined" || !drive) return [];
+    const seq = [drive.from, ...(drive.via || []), drive.to];
+    const pairs = [];
+    for (let i = 0; i < seq.length - 1; i++) pairs.push([seq[i], seq[i + 1]]);
+    return TRIP_ROUTES.filter((r) => pairs.some((p) => p[0] === r.from && p[1] === r.to));
+  }
+
   /* ---------------- Map ---------------- */
   let map, markers = {};
 
@@ -182,11 +234,33 @@
       // ...then the terracotta route on top.
       TRIP_ROUTES.forEach((leg) =>
         L.polyline(leg.path, { color: "#CB6843", weight: 3.4, opacity: 0.95, lineJoin: "round", lineCap: "round" }).addTo(map));
+
+      // Highlight today's drive in gold (only during the trip).
+      if (tripState && tripState.phase === "during" && tripState.today.drive) {
+        legsForDrive(tripState.today.drive).forEach((leg) =>
+          L.polyline(leg.path, { color: "#D89A4A", weight: 5.5, opacity: 0.98, lineJoin: "round", lineCap: "round" }).addTo(map));
+      }
+
+      // Drive-time labels at each leg's midpoint.
+      TRIP_ROUTES.forEach((leg) => {
+        if (!leg.mins) return;
+        const mid = leg.path[Math.floor(leg.path.length / 2)];
+        L.marker(mid, {
+          icon: L.divIcon({ className: "drive-label-wrap", html: `<span class="drive-label">${fmtMins(leg.mins)}</span>`, iconSize: [46, 16], iconAnchor: [23, 8] }),
+          interactive: false, keyboard: false
+        }).addTo(map);
+      });
     } else {
       // Fallback: straight lines through the stops if route data is unavailable.
       L.polyline(TRIP.stops.slice(1).map((s) => [s.lat, s.lng]),
         { color: "#CB6843", weight: 3, opacity: 0.8, lineJoin: "round" }).addTo(map);
     }
+
+    // Channel-crossing label.
+    L.marker([(folkestone[0] + calais[0]) / 2, (folkestone[1] + calais[1]) / 2], {
+      icon: L.divIcon({ className: "drive-label-wrap", html: `<span class="drive-label shuttle">Le Shuttle · 35 m</span>`, iconSize: [96, 16], iconAnchor: [48, 8] }),
+      interactive: false, keyboard: false
+    }).addTo(map);
 
     TRIP.stops.forEach((stop) => {
       const cls = stop.type;
@@ -234,11 +308,13 @@
       const sub = stop.type === "overnight" ? `${stop.date} · ${nightsLabel}`
         : stop.type === "waypoint" ? `${stop.date} · stop en route`
         : stop.date;
+      const isToday = tripState && tripState.phase === "during" && tripState.today.overnight === stop.id;
+      const todayTag = isToday ? '<span class="today-tag">● Today</span>' : "";
       li.innerHTML = `
-        <button class="stop-row" data-id="${stop.id}">
+        <button class="stop-row${isToday ? " is-today" : ""}" data-id="${stop.id}">
           <span class="stop-badge ${stop.type}">${badgeText(stop)}</span>
           <span class="meta">
-            <span class="nm">${esc(stop.name)} ${booked ? '<span class="booked-tag">✓ Booked</span>' : ""}</span>
+            <span class="nm">${esc(stop.name)} ${todayTag}${booked ? '<span class="booked-tag">✓ Booked</span>' : ""}</span>
             <span class="ctry">${esc(stop.country)}</span>
             <span class="sub">${esc(sub)}</span>
           </span>
@@ -281,6 +357,11 @@
       </div>
       ${galleryHtml(stop)}
       <div class="detail-tags">${tags.join("")}</div>
+      <div class="maps-row">
+        <span class="maps-label">📍 Directions:</span>
+        <a class="map-btn g" href="${gmapsPlace(stop)}" target="_blank" rel="noopener">Google Maps</a>
+        <a class="map-btn a" href="${amapsPlace(stop)}" target="_blank" rel="noopener">Apple Maps</a>
+      </div>
       <p class="summary">${esc(stop.summary)}</p>
       <div class="section-title">✨ Things to do</div>
       <ul class="things">${things}</ul>
@@ -486,6 +567,10 @@
             ${row("Notes", esc(h.notes))}
             ${link}
           </dl>
+          <div class="hotel-nav">
+            <a class="map-btn g" href="${h.address ? gmapsAddr(h.address) : gmapsPlace(stop)}" target="_blank" rel="noopener">▶ Navigate to hotel</a>
+            <a class="map-btn a" href="${h.address ? amapsAddr(h.address) : amapsPlace(stop)}" target="_blank" rel="noopener">Apple Maps</a>
+          </div>
         </div>
         <div class="hotel-actions">
           <button class="btn btn-ghost" id="hotel-edit">Edit</button>
@@ -605,12 +690,51 @@
     }
   }
 
+  /* ---------------- Trip-status banner (countdown / today) ---------------- */
+  function renderTripStatus() {
+    const el = $("#trip-status");
+    if (!el) return;
+    const st = tripState;
+    if (!st) { el.hidden = true; return; }
+    el.hidden = false;
+    if (st.phase === "before") {
+      el.className = "trip-status before";
+      const d = st.daysToGo;
+      el.innerHTML = `<span class="ts-pill">🚗 ${d} ${d === 1 ? "day" : "days"} to go</span>
+        <span class="ts-main">Departure <b>${esc(st.firstLabel)}</b> — Folkestone to Reims.</span>`;
+    } else if (st.phase === "after") {
+      el.className = "trip-status after";
+      el.innerHTML = `<span class="ts-pill">🎉 Trip complete</span>
+        <span class="ts-main">12 days · 7 countries · home safe. Hope it was wonderful!</span>`;
+    } else {
+      const t = st.today, tm = st.tomorrow;
+      el.className = "trip-status during";
+      const todayTxt = t.drive ? `Driving <b>${esc(t.drive.label)}</b>` : `<b>${esc(t.note || "Exploring")}</b>`;
+      const tmTxt = tm ? (tm.drive ? `<b>${esc(tm.drive.label)}</b>` : `<b>${esc(tm.note || "")}</b>`) : "home";
+      const nav = t.drive
+        ? `<span class="ts-nav">
+             <a class="map-btn g" href="${gmapsDir(t.drive)}" target="_blank" rel="noopener">▶ Navigate today’s drive</a>
+             <a class="map-btn a" href="${amapsDir(t.drive)}" target="_blank" rel="noopener">Apple Maps</a></span>`
+        : "";
+      el.innerHTML = `<span class="ts-pill">Day ${t.day} of 12 · today</span>
+        <span class="ts-main">${todayTxt}. Tomorrow: ${tmTxt}.</span>${nav}`;
+    }
+  }
+  function applyTodayPin() {
+    if (!tripState || tripState.phase !== "during") return;
+    const el = document.querySelector(`.pin[data-id="${tripState.today.overnight}"]`);
+    if (el) el.classList.add("today-pin");
+  }
+
   /* ---------------- Boot ---------------- */
   window.__openStop = openStop; // used by map popups
 
   async function boot() {
+    tripState = computeTripState();
     renderChrome();
     initMap();
+    renderTripStatus();
+    applyTodayPin();
     await Store.init();
     updateBanner();
     renderList();
