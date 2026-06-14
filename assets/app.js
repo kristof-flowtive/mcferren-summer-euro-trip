@@ -11,7 +11,10 @@
   /* ---------------- Hotel storage layer ---------------- */
   // Presents one async interface; backs onto Supabase if configured, else localStorage.
   const Store = {
-    mode: "local",   // "local" or "cloud"
+    mode: "local",      // "local" or "cloud"
+    configured: false,  // Supabase keys are present in config.js
+    error: false,       // configured, but the database couldn't be reached
+    errorMsg: "",
     client: null,
     cache: {},
     authed: false,   // signed into the shared family login (cloud mode only)
@@ -21,9 +24,13 @@
     async init() {
       const cfg = window.TRIP_CONFIG || {};
       this.email = cfg.FAMILY_EMAIL || "";
-      if (cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY) {
+      this.configured = !!(cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY);
+      if (this.configured) {
         try {
-          await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");
+          await loadSupabaseLib();
+          if (!window.supabase || !window.supabase.createClient) {
+            throw new Error("The Supabase library didn't load — it may be blocked by an ad/privacy blocker or your network.");
+          }
           this.client = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
           this.mode = "cloud";
           // Restore a previous session so unlocking persists across visits.
@@ -31,19 +38,25 @@
           this.authed = !!(data && data.session);
           if (this.authed) await this.refresh();
         } catch (e) {
-          console.warn("Supabase failed to load — falling back to local storage.", e);
-          this.mode = "local";
+          // IMPORTANT: do NOT silently fall back to local — that would leave the
+          // booking form open with no lock and save to this device unnoticed.
+          console.error("Bookings database unavailable:", e);
+          this.error = true;
+          this.errorMsg = (e && e.message) || String(e);
+          this.mode = "cloud"; // keep cloud-intent so the open local form is never shown
         }
+      } else {
+        this.mode = "local";
+        this.cache = this.readLocal();
       }
-      if (this.mode === "local") this.cache = this.readLocal();
       return this.mode;
     },
 
-    // True when the shared database is in use but nobody's unlocked it yet.
-    get locked() { return this.mode === "cloud" && !this.authed; },
+    // True when the shared database is in use, reachable, but not yet unlocked.
+    get locked() { return this.mode === "cloud" && !this.error && !this.authed; },
 
     async signIn(password) {
-      if (this.mode !== "cloud") return false;
+      if (this.mode !== "cloud" || !this.client) return false;
       const { error } = await this.client.auth.signInWithPassword({ email: this.email, password });
       if (error) { console.warn(error.message); return false; }
       this.authed = true;
@@ -108,9 +121,28 @@
   function loadScript(src) {
     return new Promise((resolve, reject) => {
       const s = document.createElement("script");
-      s.src = src; s.onload = resolve; s.onerror = reject;
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error("Failed to load " + src));
       document.head.appendChild(s);
     });
+  }
+
+  // Load the Supabase UMD bundle, trying a backup CDN if the first is blocked.
+  async function loadSupabaseLib() {
+    if (window.supabase && window.supabase.createClient) return;
+    const sources = [
+      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
+      "https://unpkg.com/@supabase/supabase-js@2"
+    ];
+    let lastErr;
+    for (const src of sources) {
+      try {
+        await loadScript(src);
+        if (window.supabase && window.supabase.createClient) return;
+      } catch (e) { lastErr = e; }
+    }
+    throw lastErr || new Error("Could not load the Supabase library from any CDN.");
   }
 
   /* ---------------- Helpers ---------------- */
@@ -352,6 +384,18 @@
   function renderHotel(stop) {
     const mount = $("#hotel-mount");
 
+    // Configured for the shared DB, but it couldn't be reached. Never show the
+    // open local form here — that would save privately with no lock, unnoticed.
+    if (Store.error) {
+      mount.innerHTML = `
+        <div class="hotel-card lock">
+          <div class="lock-title">⚠️ Can't reach the bookings database</div>
+          <p class="lock-text">The shared bookings database didn't load, so bookings can't be shown or saved right now — and nothing is being saved to this device.<br><br>This is almost always a browser <b>ad/privacy blocker</b> (or Brave Shields / a strict network) blocking the connection. Try allowing this site and refreshing.</p>
+          <div class="lock-err" style="display:block">Details: ${esc(Store.errorMsg || "unknown error")}</div>
+        </div>`;
+      return;
+    }
+
     // Private wall: when the shared database is in use, require the family
     // password before any hotel details can be viewed or edited.
     if (Store.locked) {
@@ -525,6 +569,11 @@
   function updateBanner() {
     const el = $("#storage-banner");
     el.classList.remove("cloud", "locked");
+    if (Store.error) {
+      el.classList.add("locked");
+      el.innerHTML = "⚠️ <b>Couldn't connect to the bookings database</b> — bookings aren't loading or saving. An ad/privacy blocker or your network is likely blocking it; allow this site and refresh.";
+      return;
+    }
     if (Store.mode === "cloud" && Store.authed) {
       el.classList.add("cloud");
       el.innerHTML = `🔓 Unlocked · hotel bookings are <b>shared across the family</b>. <button class="link-btn" id="lock-btn">Lock again</button>`;
