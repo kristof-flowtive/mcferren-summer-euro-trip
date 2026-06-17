@@ -212,20 +212,6 @@ h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; margin: 
   50%      { box-shadow: 0 0 0 8px rgba(216,154,74,0.12), 0 3px 7px rgba(60,40,20,0.35); }
 }
 
-/* Drive-time labels along the route */
-.drive-label-wrap { background: none; border: none; }
-.drive-label {
-  display: inline-block;
-  font-family: "Nunito Sans", sans-serif;
-  font-size: 11px; font-weight: 800; color: var(--ink);
-  background: rgba(255,253,248,0.92);
-  border: 1px solid var(--line);
-  border-radius: 11px;
-  padding: 1px 7px;
-  white-space: nowrap;
-  box-shadow: 0 1px 3px rgba(80,55,30,0.18);
-}
-.drive-label.shuttle { color: var(--ink-soft); font-weight: 700; border-style: dashed; }
 
 /* ---------- Detail pane ---------- */
 .detail-pane {
@@ -519,14 +505,40 @@ h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; margin: 
 
 /* ---------- Responsive ---------- */
 @media (max-width: 920px) {
-  .layout { grid-template-columns: 1fr; }
-  .map-pane { min-height: 56vh; }
+  .layout { grid-template-columns: 1fr; gap: 16px; }
+  .map-pane { min-height: 62vh; }
   .detail-pane { position: static; max-height: none; }
-  .header-inner { align-items: flex-start; }
+  .header-inner { align-items: flex-start; gap: 14px; }
+  .trip-status { gap: 8px 12px; }
+  .ts-nav { margin-left: 0; width: 100%; }
+  .ts-nav .map-btn { flex: 1; text-align: center; }
 }
+
+@media (max-width: 560px) {
+  .header-inner { padding-top: 16px; padding-bottom: 16px; }
+  .site-header h1 { font-size: 28px; }
+  .kicker { font-size: 11px; }
+  .subtitle { font-size: 12.5px; }
+  /* Stats: one tidy row of compact pills */
+  .header-stats { width: 100%; gap: 7px; flex-wrap: nowrap; }
+  .stat { flex: 1; min-width: 0; padding: 7px 6px; }
+  .stat .num { font-size: 18px; }
+  .stat .lab { font-size: 9px; letter-spacing: .2px; }
+  .trip-status { font-size: 13px; padding-top: 9px; padding-bottom: 9px; }
+  .view { padding: 18px 16px 22px; }
+  /* Bigger, easier tap targets */
+  .map-btn { padding: 9px 13px; }
+  .maps-row { gap: 7px; }
+  .maps-row .map-btn { flex: 1; text-align: center; }
+  .hotel-nav .map-btn, .hotel-actions .btn { flex: 1; text-align: center; }
+  .stay-links { width: 100%; }
+  .stay-links .stay-link { flex: 1; text-align: center; }
+}
+
 @media (max-width: 460px) {
   .hotel-form { grid-template-columns: 1fr; }
-  .header-stats { width: 100%; }
+  .detail-head h2 { font-size: 24px; }
+  .list-header h2 { font-size: 22px; }
 }
 
 /* Leaflet popup tidy */

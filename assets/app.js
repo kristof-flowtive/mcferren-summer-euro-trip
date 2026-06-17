@@ -240,27 +240,11 @@
         legsForDrive(tripState.today.drive).forEach((leg) =>
           L.polyline(leg.path, { color: "#D89A4A", weight: 5.5, opacity: 0.98, lineJoin: "round", lineCap: "round" }).addTo(map));
       }
-
-      // Drive-time labels at each leg's midpoint.
-      TRIP_ROUTES.forEach((leg) => {
-        if (!leg.mins) return;
-        const mid = leg.path[Math.floor(leg.path.length / 2)];
-        L.marker(mid, {
-          icon: L.divIcon({ className: "drive-label-wrap", html: `<span class="drive-label">${fmtMins(leg.mins)}</span>`, iconSize: [46, 16], iconAnchor: [23, 8] }),
-          interactive: false, keyboard: false
-        }).addTo(map);
-      });
     } else {
       // Fallback: straight lines through the stops if route data is unavailable.
       L.polyline(TRIP.stops.slice(1).map((s) => [s.lat, s.lng]),
         { color: "#CB6843", weight: 3, opacity: 0.8, lineJoin: "round" }).addTo(map);
     }
-
-    // Channel-crossing label.
-    L.marker([(folkestone[0] + calais[0]) / 2, (folkestone[1] + calais[1]) / 2], {
-      icon: L.divIcon({ className: "drive-label-wrap", html: `<span class="drive-label shuttle">Le Shuttle · 35 m</span>`, iconSize: [96, 16], iconAnchor: [48, 8] }),
-      interactive: false, keyboard: false
-    }).addTo(map);
 
     TRIP.stops.forEach((stop) => {
       const cls = stop.type;
@@ -377,6 +361,11 @@
     $("#list-view").hidden = true;
     v.hidden = false;
     $("#detail-pane").scrollTop = 0;
+    // On mobile the detail panel sits below the map — bring it into view so a
+    // tap on a pin/list item doesn't look like nothing happened.
+    if (window.matchMedia("(max-width: 920px)").matches) {
+      $("#detail-pane").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
 
   function staysHtml(stop) {
