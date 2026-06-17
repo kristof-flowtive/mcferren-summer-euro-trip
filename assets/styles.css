@@ -25,7 +25,6 @@
 
 html, body {
   margin: 0;
-  height: 100%;
 }
 
 body {
@@ -505,7 +504,9 @@ h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; margin: 
 
 /* ---------- Responsive ---------- */
 @media (max-width: 920px) {
-  .layout { grid-template-columns: 1fr; gap: 16px; }
+  /* Single column; let the page grow & scroll naturally instead of being
+     pinned to the viewport (otherwise the detail panel collapses). */
+  .layout { grid-template-columns: 1fr; gap: 16px; flex: none; min-height: auto; }
   .map-pane { min-height: 62vh; }
   .detail-pane { position: static; max-height: none; }
   .header-inner { align-items: flex-start; gap: 14px; }
